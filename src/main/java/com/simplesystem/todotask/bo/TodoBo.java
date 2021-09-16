@@ -1,6 +1,6 @@
 package com.simplesystem.todotask.bo;
 
-import com.simplesystem.todotask.dto.TodoStatus;
+import com.simplesystem.todotask.vm.TodoStatus;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
