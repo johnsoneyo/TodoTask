@@ -1,6 +1,5 @@
 package com.simplesystem.todotask.controller;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.service.TodoService;
 import com.simplesystem.todotask.vm.ApiResponseVM;
 import com.simplesystem.todotask.vm.CreateTodoVM;
@@ -11,10 +10,16 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.util.Collections;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,8 +57,23 @@ public class TodoController {
   @ResponseStatus(HttpStatus.OK)
   ApiResponseVM<TodoVM> modify(@PathVariable Long id, @RequestBody @Valid ModifyTodoVM todoVM) {
 
-    return new ApiResponseVM<TodoVM>().withBody(todoService.modify(id,todoVM));
+    return new ApiResponseVM<TodoVM>().withBody(todoService.modify(id, todoVM));
 
   }
+
+  @Operation(summary = "retrieves a todo items")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Retrieves todo items", content = {
+          @Content(mediaType = "application/json", schema = @Schema(implementation = TodoVM.class))})})
+  @GetMapping
+  @ResponseStatus(HttpStatus.OK)
+  ApiResponseVM<Page<TodoVM>> findAll(@NotNull TodoVM todo, @PageableDefault(page = 0, size = 100)
+  @SortDefault.SortDefaults({
+      @SortDefault(sort = "creationDate", direction = Sort.Direction.DESC)}) Pageable pageable) {
+
+    return new ApiResponseVM<Page<TodoVM>>().withBody(todoService.findAll(todo,pageable));
+
+  }
+
 
 }

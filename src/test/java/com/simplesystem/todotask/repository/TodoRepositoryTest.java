@@ -21,12 +21,16 @@ class TodoRepositoryTest {
   @Autowired
   private TodoRepository repository;
 
+  TodoBo todo;
+
   @BeforeEach
   void setUp() {
   }
 
   @AfterEach
+  @Transactional
   void tearDown() {
+    repository.delete(todo);
   }
 
   @DisplayName("when new Todo object is saved, it is successfull")
@@ -34,12 +38,12 @@ class TodoRepositoryTest {
   @Transactional
   void test_newTodo_saves_successfully() {
 
-    Assertions.assertThat( repository.save(new TodoBo().withStatus(TodoStatus.NOT_DONE)
-    .withCreationDate(LocalDateTime.now())
-    .withDoneDate(null).withDescription("test todo").withDueDate(LocalDateTime.now().plusMinutes(5))))
+    todo = repository.save(new TodoBo().withStatus(TodoStatus.NOT_DONE)
+        .withCreationDate(LocalDateTime.now())
+        .withDoneDate(null).withDescription("test todo").withDueDate(LocalDateTime.now().plusMinutes(5)));
+    Assertions.assertThat(todo )
        .isNotNull()
-       .hasFieldOrPropertyWithValue("status",TodoStatus.NOT_DONE)
-       .hasFieldOrPropertyWithValue("id",1L);
+       .hasFieldOrPropertyWithValue("status",TodoStatus.NOT_DONE);
 
   }
 

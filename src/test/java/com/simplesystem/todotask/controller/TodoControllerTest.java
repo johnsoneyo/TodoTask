@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -72,9 +73,6 @@ class TodoControllerTest {
         .build();
   }
 
-  @AfterEach
-  void tearDown() {
-  }
 
   @Test
   @SneakyThrows
@@ -208,6 +206,34 @@ class TodoControllerTest {
         .andExpect(jsonPath("$.errors", not(empty())))
         .andExpect(jsonPath("$.errors[0].message", is(errorMessage)))
         .andExpect(status().isNotFound());
+
+  }
+
+
+
+  @Test
+  @DisplayName("when todo is fetched by NOT_DONE status returns 3 items")
+  @SneakyThrows
+  void test_todo_items_returns_3_itemsfor_notdone_status() {
+
+    mockMvc.perform(get("/todos?status=NOT_DONE"))
+        .andDo(print())
+        .andExpect(jsonPath("$.errors", is(empty())))
+        .andExpect(jsonPath("$.body.content", hasSize(2)))
+        .andExpect(status().isOk());
+
+  }
+
+  @Test
+  @DisplayName("when todo is fetched returns total 5 items")
+  @SneakyThrows
+  void test_todo_items_returns_5_items_foralltodos() {
+
+    mockMvc.perform(get("/todos"))
+        .andDo(print())
+        .andExpect(jsonPath("$.errors", is(empty())))
+        .andExpect(jsonPath("$.body.content", hasSize(5)))
+        .andExpect(status().isOk());
 
   }
 

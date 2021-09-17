@@ -1,8 +1,6 @@
 package com.simplesystem.todotask.service.impl;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.bo.TodoBo;
 import com.simplesystem.todotask.controller.advice.TodoException;
 import com.simplesystem.todotask.controller.advice.TodoNotFoundException;
@@ -13,11 +11,16 @@ import com.simplesystem.todotask.vm.ModifyTodoVM;
 import com.simplesystem.todotask.vm.TodoStatus;
 import com.simplesystem.todotask.vm.TodoVM;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,6 @@ public class TodoServiceImpl implements TodoService {
 
   private final TodoRepository todoRepository;
   private final ModelMapper mapper;
-  private final ObjectMapper objectMapper;
 
   @Override
   @Transactional
@@ -45,23 +47,31 @@ public class TodoServiceImpl implements TodoService {
     return todoRepository.findById(id).map(destination -> {
       mapper.map(source, destination);
 
-      if(Objects.equals(source.getStatus(),TodoStatus.DONE)){
+      if (Objects.equals(source.getStatus(), TodoStatus.DONE)) {
         destination.setDoneDate(LocalDateTime.now());
       }
 
-      if(Objects.equals(source.getStatus(),TodoStatus.PAST_DUE)){
-        throw new TodoException(String.format("Todo status with id %d cannot be modified as past due",id));
+      if (Objects.equals(source.getStatus(), TodoStatus.PAST_DUE)) {
+        throw new TodoException(
+            String.format("Todo status with id %d cannot be modified as past due", id));
       }
 
       return destination;
     }).map(modifiedTodo -> mapper.map(modifiedTodo, TodoVM.class))
-        .orElseThrow(() -> new TodoNotFoundException(String.format("Todo with id %d not found",id)));
+        .orElseThrow(
+            () -> new TodoNotFoundException(String.format("Todo with id %d not found", id)));
   }
 
-  @SneakyThrows
-  private TodoBo patchToObject(JsonPatch patch, TodoBo todo) {
-    JsonNode patched = patch.apply(objectMapper.convertValue(todo, JsonNode.class));
-    String status = patched.path("status").asText();
-    return objectMapper.treeToValue(patched, TodoBo.class);
+  @Override
+  public Page<TodoVM> findAll(TodoVM todo,Pageable pageable) {
+
+    Specification<TodoBo> specification = Specification.where((root, query, builder) -> builder.isNotNull(root.get("id")));
+
+    if(Objects.nonNull(todo.getStatus())){
+      specification = specification.and((root, query, builder) -> builder.equal(root.get("status"), todo.getStatus()));
+    }
+    List<TodoVM> todos = todoRepository.findAll(specification,pageable)
+        .get().map(t -> mapper.map(t, TodoVM.class)).collect(Collectors.toList());
+    return new PageImpl<TodoVM>(todos, pageable, todos.size());
   }
 }

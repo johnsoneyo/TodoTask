@@ -4,6 +4,8 @@ import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.vm.CreateTodoVM;
 import com.simplesystem.todotask.vm.ModifyTodoVM;
 import com.simplesystem.todotask.vm.TodoVM;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface TodoService {
 
@@ -21,4 +23,13 @@ public interface TodoService {
    * @return
    */
   TodoVM modify(Long id, ModifyTodoVM todoVM);
+
+
+  /**
+   *
+   * @param todo
+   * @param pageable
+   * @return
+   */
+  Page<TodoVM> findAll(TodoVM todo,Pageable pageable);
 }
