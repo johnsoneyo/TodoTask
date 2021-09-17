@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.bo.TodoBo;
 import com.simplesystem.todotask.controller.advice.TodoException;
+import com.simplesystem.todotask.controller.advice.TodoNotFoundException;
 import com.simplesystem.todotask.repository.TodoRepository;
 import com.simplesystem.todotask.service.TodoService;
 import com.simplesystem.todotask.vm.CreateTodoVM;
@@ -54,7 +55,7 @@ public class TodoServiceImpl implements TodoService {
 
       return destination;
     }).map(modifiedTodo -> mapper.map(modifiedTodo, TodoVM.class))
-        .orElseThrow(() -> new TodoException(String.format("Todo with id %d not found ",id)));
+        .orElseThrow(() -> new TodoNotFoundException(String.format("Todo with id %d not found",id)));
   }
 
   @SneakyThrows

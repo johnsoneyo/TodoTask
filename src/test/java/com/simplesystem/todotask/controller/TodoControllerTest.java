@@ -188,5 +188,28 @@ class TodoControllerTest {
 
   }
 
+  @Test
+  @SneakyThrows
+  @DisplayName("when todo status modified with a non existing todo item , error is generated")
+  @Transactional
+  void test__modify_notfound_todo__returns_error() {
+
+
+    String  errorMessage = String.format("Todo with id %d not found",-1);
+
+    byte[] data = Files
+        .readAllBytes(Paths.get("src/test/resources/requests/patch-update-status-pastdue.json"));
+
+    mockMvc.perform(
+        patch("/todos/-1").contentType("application/json;charset=UTF-8")
+            .content(data))
+        .andDo(print())
+
+        .andExpect(jsonPath("$.errors", not(empty())))
+        .andExpect(jsonPath("$.errors[0].message", is(errorMessage)))
+        .andExpect(status().isNotFound());
+
+  }
+
 
 }

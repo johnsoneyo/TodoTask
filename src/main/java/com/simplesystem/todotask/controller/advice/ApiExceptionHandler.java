@@ -29,9 +29,15 @@ public class ApiExceptionHandler {
   protected ResponseEntity<ApiResponseVM> handleTodoPastdueUpdate(TodoException ex) {
 
     return new ResponseEntity<>(new ApiResponseVM<>().withErrors(new HashSet<FieldErrorVM>(
-        Arrays.asList(new FieldErrorVM().withField("status")
-            .withObjectName("modifyTodoVM")
-            .withMessage(ex.getMessage())))), HttpStatus.BAD_REQUEST);
+        Arrays.asList(new FieldErrorVM().withObjectName("modifyTodoVM").withMessage(ex.getMessage())))), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(TodoNotFoundException.class)
+  protected ResponseEntity<ApiResponseVM> handleTodoPastdueUpdate(TodoNotFoundException ex) {
+
+    return new ResponseEntity<>(new ApiResponseVM<>().withErrors(new HashSet<FieldErrorVM>(
+        Arrays.asList(new FieldErrorVM().withObjectName("modifyTodoVM")
+            .withMessage(ex.getMessage())))), HttpStatus.NOT_FOUND);
   }
 
 }
