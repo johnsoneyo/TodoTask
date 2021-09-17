@@ -76,4 +76,17 @@ public class TodoController {
   }
 
 
+  @Operation(summary = "retrieves a todo item")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Retrieves a todo item", content = {
+          @Content(mediaType = "application/json", schema = @Schema(implementation = TodoVM.class))})})
+  @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  ApiResponseVM<TodoVM> findOne(@PathVariable Long id) {
+
+    return new ApiResponseVM<TodoVM>().withBody(todoService.findOne(id));
+
+  }
+
+
 }

@@ -1,6 +1,5 @@
 package com.simplesystem.todotask.service.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.simplesystem.todotask.bo.TodoBo;
 import com.simplesystem.todotask.controller.advice.TodoException;
 import com.simplesystem.todotask.controller.advice.TodoNotFoundException;
@@ -63,15 +62,25 @@ public class TodoServiceImpl implements TodoService {
   }
 
   @Override
-  public Page<TodoVM> findAll(TodoVM todo,Pageable pageable) {
+  public Page<TodoVM> findAll(TodoVM todo, Pageable pageable) {
 
-    Specification<TodoBo> specification = Specification.where((root, query, builder) -> builder.isNotNull(root.get("id")));
+    Specification<TodoBo> specification = Specification
+        .where((root, query, builder) -> builder.isNotNull(root.get("id")));
 
-    if(Objects.nonNull(todo.getStatus())){
-      specification = specification.and((root, query, builder) -> builder.equal(root.get("status"), todo.getStatus()));
+    if (Objects.nonNull(todo.getStatus())) {
+      specification = specification
+          .and((root, query, builder) -> builder.equal(root.get("status"), todo.getStatus()));
     }
-    List<TodoVM> todos = todoRepository.findAll(specification,pageable)
+    List<TodoVM> todos = todoRepository.findAll(specification, pageable)
         .get().map(t -> mapper.map(t, TodoVM.class)).collect(Collectors.toList());
     return new PageImpl<TodoVM>(todos, pageable, todos.size());
+  }
+
+  @Override
+  public TodoVM findOne(Long id) {
+    return todoRepository.findById(id)
+        .map(todo -> mapper.map(todo, TodoVM.class))
+        .orElseThrow(
+            () -> new TodoNotFoundException(String.format("Todo with id %d not found", id)));
   }
 }

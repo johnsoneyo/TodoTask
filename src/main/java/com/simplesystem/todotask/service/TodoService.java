@@ -27,9 +27,17 @@ public interface TodoService {
 
   /**
    *
+   * Retrieves all todo items, filters/ sort data
    * @param todo
    * @param pageable
    * @return
    */
   Page<TodoVM> findAll(TodoVM todo,Pageable pageable);
+
+  /**
+   * Retrieves one todo item by id
+   * @param id
+   * @return
+   */
+  TodoVM findOne(Long id);
 }

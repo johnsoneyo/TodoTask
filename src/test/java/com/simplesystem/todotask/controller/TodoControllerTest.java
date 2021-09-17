@@ -237,5 +237,19 @@ class TodoControllerTest {
 
   }
 
+  @Test
+  @DisplayName("when todo is fetched with id 10 returns total 1 item")
+  @SneakyThrows
+  void test_gettodo_item_returns_anitem_() {
+
+    mockMvc.perform(get("/todos/10"))
+        .andDo(print())
+        .andExpect(jsonPath("$.errors", is(empty())))
+        .andExpect(jsonPath("$.body", is(notNullValue())))
+        .andExpect(jsonPath("$.body.id", is(10)))
+        .andExpect(status().isOk());
+
+  }
+
 
 }
