@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id:  quartz-table
+      author:  jeyo
+      changes:
+        - sqlFile:
+            dbms:  '!h2,  oracle,  mysql'
+            endDelimiter: ';'
+            splitStatements:  true
+            path:  sql/quartz_table_h2.sql
+            stripComments:  true
+            relativeToChangelogFile: true

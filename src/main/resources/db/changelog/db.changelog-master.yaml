@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changesets/todo.yaml
   - include:
       file: db/changelog/changesets/seed-todo.yaml
+  - include:
+      file: db/changelog/changesets/quartz-table.yaml
