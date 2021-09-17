@@ -2,6 +2,7 @@ package com.simplesystem.todotask.service;
 
 import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.vm.CreateTodoVM;
+import com.simplesystem.todotask.vm.ModifyTodoVM;
 import com.simplesystem.todotask.vm.TodoVM;
 
 public interface TodoService {
@@ -19,5 +20,5 @@ public interface TodoService {
    * @param todoVM
    * @return
    */
-  TodoVM modify(Long id, TodoVM todoVM);
+  TodoVM modify(Long id, ModifyTodoVM todoVM);
 }

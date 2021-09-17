@@ -2,6 +2,8 @@ package com.simplesystem.todotask.controller.advice;
 
 import com.simplesystem.todotask.vm.ApiResponseVM;
 import com.simplesystem.todotask.vm.FieldErrorVM;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
@@ -21,6 +23,15 @@ public class ApiExceptionHandler {
         .map(f -> new FieldErrorVM(f.getObjectName(), f.getField(), f.getDefaultMessage()))
         .collect(Collectors.toSet());
     return new ResponseEntity<>(new ApiResponseVM<>().withErrors(errors), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(TodoException.class)
+  protected ResponseEntity<ApiResponseVM> handleTodoPastdueUpdate(TodoException ex) {
+
+    return new ResponseEntity<>(new ApiResponseVM<>().withErrors(new HashSet<FieldErrorVM>(
+        Arrays.asList(new FieldErrorVM().withField("status")
+            .withObjectName("modifyTodoVM")
+            .withMessage(ex.getMessage())))), HttpStatus.BAD_REQUEST);
   }
 
 }

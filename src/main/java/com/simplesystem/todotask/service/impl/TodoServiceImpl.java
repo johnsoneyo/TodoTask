@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.bo.TodoBo;
-import com.simplesystem.todotask.controller.advice.TodoNotFoundException;
+import com.simplesystem.todotask.controller.advice.TodoException;
 import com.simplesystem.todotask.repository.TodoRepository;
 import com.simplesystem.todotask.service.TodoService;
 import com.simplesystem.todotask.vm.CreateTodoVM;
+import com.simplesystem.todotask.vm.ModifyTodoVM;
 import com.simplesystem.todotask.vm.TodoStatus;
 import com.simplesystem.todotask.vm.TodoVM;
 import java.time.LocalDateTime;
@@ -38,7 +39,7 @@ public class TodoServiceImpl implements TodoService {
 
   @Override
   @Transactional
-  public TodoVM modify(Long id, TodoVM source) {
+  public TodoVM modify(Long id, ModifyTodoVM source) {
 
     return todoRepository.findById(id).map(destination -> {
       mapper.map(source, destination);
@@ -47,8 +48,13 @@ public class TodoServiceImpl implements TodoService {
         destination.setDoneDate(LocalDateTime.now());
       }
 
+      if(Objects.equals(source.getStatus(),TodoStatus.PAST_DUE)){
+        throw new TodoException(String.format("Todo status with id %d cannot be modified as past due",id));
+      }
+
       return destination;
-    }).map(modifiedTodo -> mapper.map(modifiedTodo, TodoVM.class)).orElseThrow(TodoNotFoundException::new);
+    }).map(modifiedTodo -> mapper.map(modifiedTodo, TodoVM.class))
+        .orElseThrow(() -> new TodoException(String.format("Todo with id %d not found ",id)));
   }
 
   @SneakyThrows

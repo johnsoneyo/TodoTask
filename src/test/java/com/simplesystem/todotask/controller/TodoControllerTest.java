@@ -148,7 +148,7 @@ class TodoControllerTest {
         .withDueDate(LocalDateTime.now().plusMinutes(5)));
 
     byte[] data = Files
-        .readAllBytes(Paths.get("src/test/resources/requests/patch-description-todo.json"));
+        .readAllBytes(Paths.get("src/test/resources/requests/patch-update-status-done.json"));
 
     mockMvc.perform(
         patch("/todos/" + createdTodo.getId()).contentType("application/json;charset=UTF-8")
@@ -158,6 +158,33 @@ class TodoControllerTest {
         .andExpect(jsonPath("$.body.doneDate", notNullValue()))
         .andExpect(jsonPath("$.body.status", is("DONE")))
         .andExpect(status().isOk());
+
+  }
+
+  @Test
+  @SneakyThrows
+  @DisplayName("when todo status is marked as past due , error is generated")
+  @Transactional
+  void test__modify_status_pastdue_has_errors() {
+
+    TodoBo createdTodo = repository.saveAndFlush(new TodoBo().withStatus(TodoStatus.NOT_DONE)
+        .withCreationDate(LocalDateTime.now())
+        .withDoneDate(null).withDescription("test todo")
+        .withDueDate(LocalDateTime.now().plusMinutes(5)));
+
+    String  errorMessage = String.format("Todo status with id %d cannot be modified as past due",createdTodo.getId());
+
+    byte[] data = Files
+        .readAllBytes(Paths.get("src/test/resources/requests/patch-update-status-pastdue.json"));
+
+    mockMvc.perform(
+        patch("/todos/" + createdTodo.getId()).contentType("application/json;charset=UTF-8")
+            .content(data))
+        .andDo(print())
+
+        .andExpect(jsonPath("$.errors", not(empty())))
+        .andExpect(jsonPath("$.errors[0].message", is(errorMessage)))
+        .andExpect(status().isBadRequest());
 
   }
 
