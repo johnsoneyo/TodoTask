@@ -1,9 +1,7 @@
 package com.simplesystem.todotask.vm;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.simplesystem.todotask.validator.ValidDueDate;
+import com.simplesystem.todotask.common.ValidDueDate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;

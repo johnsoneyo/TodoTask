@@ -136,5 +136,30 @@ class TodoControllerTest {
 
   }
 
+  @Test
+  @SneakyThrows
+  @DisplayName("when todo status is marked as done , doneDate is updated")
+  @Transactional
+  void test__modify_status_done() {
+
+    TodoBo createdTodo = repository.saveAndFlush(new TodoBo().withStatus(TodoStatus.NOT_DONE)
+        .withCreationDate(LocalDateTime.now())
+        .withDoneDate(null).withDescription("test todo")
+        .withDueDate(LocalDateTime.now().plusMinutes(5)));
+
+    byte[] data = Files
+        .readAllBytes(Paths.get("src/test/resources/requests/patch-description-todo.json"));
+
+    mockMvc.perform(
+        patch("/todos/" + createdTodo.getId()).contentType("application/json;charset=UTF-8")
+            .content(data))
+        .andDo(print())
+        .andExpect(jsonPath("$.errors", is(empty())))
+        .andExpect(jsonPath("$.body.doneDate", notNullValue()))
+        .andExpect(jsonPath("$.body.status", is("DONE")))
+        .andExpect(status().isOk());
+
+  }
+
 
 }

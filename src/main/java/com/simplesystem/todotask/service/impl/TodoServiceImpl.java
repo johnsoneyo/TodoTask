@@ -11,6 +11,7 @@ import com.simplesystem.todotask.vm.CreateTodoVM;
 import com.simplesystem.todotask.vm.TodoStatus;
 import com.simplesystem.todotask.vm.TodoVM;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +42,13 @@ public class TodoServiceImpl implements TodoService {
 
     return todoRepository.findById(id).map(destination -> {
       mapper.map(source, destination);
+
+      if(Objects.equals(source.getStatus(),TodoStatus.DONE)){
+        destination.setDoneDate(LocalDateTime.now());
+      }
+
       return destination;
-    }).map(modifiedTodo -> mapper.map(modifiedTodo, TodoVM.class))
-        .orElseThrow(TodoNotFoundException::new);
+    }).map(modifiedTodo -> mapper.map(modifiedTodo, TodoVM.class)).orElseThrow(TodoNotFoundException::new);
   }
 
   @SneakyThrows
