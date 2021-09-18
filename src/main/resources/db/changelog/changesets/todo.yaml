@@ -24,16 +24,16 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: creation_date
-                  type: date
+                  type: datetime
                   constraints:
                     nullable: false
               - column:
                   name: due_date
-                  type: date
+                  type: datetime
                   constraints:
                     nullable: false
               - column:
                   name: done_date
-                  type: date
+                  type: datetime
 
             tableName: todo

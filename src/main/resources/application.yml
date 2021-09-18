@@ -15,8 +15,9 @@ spring:
 
   h2:
     console:
-      enabled=: true
-
+      enabled: true
+      settings:
+        web-allow-others: true
 
   main:
     allow-bean-definition-overriding: true
