@@ -36,7 +36,7 @@ public class TodoController {
 
   private final TodoService todoService;
 
-  @Operation(summary = "create a todo item")
+  @Operation(summary = "creates a todo item")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Todo item created successfully", content = {
           @Content(mediaType = "application/json", schema = @Schema(implementation = CreateTodoVM.class))}),
@@ -62,7 +62,7 @@ public class TodoController {
 
   }
 
-  @Operation(summary = "retrieves a todo items")
+  @Operation(summary = "retrieves pagination of todo items")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Retrieves todo items", content = {
           @Content(mediaType = "application/json", schema = @Schema(implementation = TodoVM.class))})})
