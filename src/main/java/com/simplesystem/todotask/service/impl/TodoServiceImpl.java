@@ -36,7 +36,9 @@ public class TodoServiceImpl implements TodoService {
   @Override
   @Transactional
   public CreateTodoVM create(CreateTodoVM todo) {
-    TodoBo created = todoRepository.save(mapper.map(todo, TodoBo.class).withCreationDate(LocalDateTime.now()).withStatus(TodoStatus.NOT_DONE));
+    TodoBo created = todoRepository.save(
+        mapper.map(todo, TodoBo.class).withCreationDate(LocalDateTime.now())
+            .withStatus(TodoStatus.NOT_DONE));
     jobService.scheduleTodo(created);
     return mapper.map(created, CreateTodoVM.class);
   }
@@ -53,7 +55,8 @@ public class TodoServiceImpl implements TodoService {
       }
 
       if (Objects.equals(source.getStatus(), TodoStatus.PAST_DUE)) {
-        throw new TodoException(String.format("Todo status with id %d cannot be modified as past due", id));
+        throw new TodoException(
+            String.format("Todo status with id %d cannot be modified as past due", id));
       }
 
       return destination;
@@ -81,8 +84,16 @@ public class TodoServiceImpl implements TodoService {
   public TodoVM findOne(Long id) {
     return todoRepository.findById(id)
         .map(todo -> mapper.map(todo, TodoVM.class))
-        .orElseThrow(() -> new TodoNotFoundException(String.format("Todo with id %d not found", id)));
+        .orElseThrow(
+            () -> new TodoNotFoundException(String.format("Todo with id %d not found", id)));
   }
 
-
+  @Override
+  public void deleteOne(Long id) {
+    if(todoRepository.findById(id).isPresent()){
+      todoRepository.deleteById(id);
+      return;
+    }
+     throw new TodoNotFoundException(String.format("Todo with id %d not found", id));
+  }
 }

@@ -5,6 +5,8 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -23,7 +25,9 @@ import com.simplesystem.todotask.vm.TodoStatus;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.SneakyThrows;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -250,6 +254,47 @@ class TodoControllerTest {
         .andExpect(status().isOk());
 
   }
+
+
+  @Test
+  @DisplayName("when todo is deleted response returns a no content")
+  @SneakyThrows
+  void test_deletetodo_item_returns_no_content() {
+
+    TodoBo createdTodo = repository.saveAndFlush(new TodoBo().withStatus(TodoStatus.NOT_DONE)
+        .withCreationDate(LocalDateTime.now())
+        .withDoneDate(null).withDescription("test todo")
+        .withDueDate(LocalDateTime.now().plusMinutes(5)));
+
+    mockMvc.perform(
+        delete("/todos/" + createdTodo.getId()))
+        .andDo(print())
+        .andExpect(jsonPath("$.errors", is(empty())))
+        .andExpect(status().isNoContent());
+
+    Assertions.assertThat(repository.findById(createdTodo.getId()))
+        .isEqualTo(Optional.empty());
+
+  }
+
+
+  @Test
+  @SneakyThrows
+  @DisplayName("when todo status deleted with a non existing todo item , error is generated")
+  @Transactional
+  void test_deleting_notfound_todo__returns_error() {
+
+    String  errorMessage = String.format("Todo with id %d not found",-1);
+
+    mockMvc.perform(
+        delete("/todos/-1"))
+        .andDo(print())
+        .andExpect(jsonPath("$.errors", not(empty())))
+        .andExpect(jsonPath("$.errors[0].message", is(errorMessage)))
+        .andExpect(status().isNotFound());
+
+  }
+
 
 
 }

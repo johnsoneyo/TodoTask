@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -71,7 +72,7 @@ public class TodoController {
   @SortDefault.SortDefaults({
       @SortDefault(sort = "creationDate", direction = Sort.Direction.DESC)}) Pageable pageable) {
 
-    return new ApiResponseVM<Page<TodoVM>>().withBody(todoService.findAll(todo,pageable));
+    return new ApiResponseVM<Page<TodoVM>>().withBody(todoService.findAll(todo, pageable));
 
   }
 
@@ -85,6 +86,20 @@ public class TodoController {
   ApiResponseVM<TodoVM> findOne(@PathVariable Long id) {
 
     return new ApiResponseVM<TodoVM>().withBody(todoService.findOne(id));
+
+  }
+
+  @Operation(summary = "removes a todo item")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "204", description = "Removes a todo item", content = {
+          @Content(mediaType = "application/json", schema = @Schema(implementation = TodoVM.class)),
+      }),
+      @ApiResponse(responseCode = "404", description = "Todo item not found", content = @Content)})
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  ApiResponseVM<?> deleteOne(@PathVariable Long id) {
+    todoService.deleteOne(id);
+    return new ApiResponseVM<>();
 
   }
 

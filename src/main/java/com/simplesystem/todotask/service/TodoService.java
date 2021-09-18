@@ -1,6 +1,5 @@
 package com.simplesystem.todotask.service;
 
-import com.github.fge.jsonpatch.JsonPatch;
 import com.simplesystem.todotask.vm.CreateTodoVM;
 import com.simplesystem.todotask.vm.ModifyTodoVM;
 import com.simplesystem.todotask.vm.TodoVM;
@@ -35,9 +34,15 @@ public interface TodoService {
   Page<TodoVM> findAll(TodoVM todo,Pageable pageable);
 
   /**
-   * Retrieves one todo item by id
+   * Retrieves one todo item by ID
    * @param id
    * @return
    */
   TodoVM findOne(Long id);
+
+  /**
+   * Removes one todo item by their ID
+   * @param id
+   */
+  void deleteOne(Long id);
 }
