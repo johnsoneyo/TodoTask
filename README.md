@@ -1,4 +1,5 @@
 # Todo App
+[![Build Status](https://app.travis-ci.com/johnson3yo/TodoTask.svg?token=CAcYaTFWori8uznwxtxS&branch=main)](https://app.travis-ci.com/johnson3yo/TodoTask)
 ## About the Service
 
 The service is just a simple Todo REST service. It uses an in-memory database (H2) to store the data. You can also do with a relational database like MySQL or PostgreSQL. If your database connection properties work, you can call some REST endpoints defined in com.simplesystem.todotask.controller.TodoController on port 8080. (see below)
