@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      context: test
+      failOnError: true
+      id: seed-items
+      author: jeyo
+      changes:
+        - loadData:
+            columns:
+              - column:
+                  header: ID
+                  name: id
+                  type: NUMERIC
+              - column:
+                  header: DESCRIPTION
+                  name: description
+                  type: STRING
+              - column:
+                  header: STATUS
+                  name: status
+                  type: STRING
+              - column:
+                  header: CREATION_DATE
+                  name: creation_date
+                  type: DATETIME
+              - column:
+                  header: DUE_DATE
+                  name: due_date
+                  type: DATETIME
+              - column:
+                  header: DONE_DATE
+                  name: done_date
+                  type: DATETIME
+
+            commentLineStartsWith: //
+            encoding: UTF-8
+            file: csv/todo.csv
+            quotchar: ''''
+            relativeToChangelogFile: true
+            separator: ','
+            tableName: todo
+            usePreparedStatements: true
