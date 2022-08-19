@@ -69,3 +69,6 @@ $ curl -X POST "http://localhost:8080/todos" -H "accept: application/json" -H "C
 - [GET /todos/[id]](http://localhost:8080/swagger-ui/#/todo-controller/findOneUsingGET)
 - [POST /todos](http://localhost:8080/swagger-ui/#/todo-controller/createUsingPOST)
 - [PATCH /todos/[id]](http://localhost:8080/swagger-ui/#/todo-controller/modifyUsingPATCH)
+
+
+///// new line //////
